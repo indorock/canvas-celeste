@@ -77,7 +77,6 @@ var Celeste = function(){
     this.loadMeteorArgs = function(args){
         if(args.meteorFrequency){
             this.meteor.frequency =  args.meteorFrequency;
-            console.log(this.meteor.frequency);
         }
         if(args.meteorMinSpeed) this.meteor.minSpeed =  args.meteorMinSpeed;
         if(args.meteorMaxSpeed) this.meteor.maxSpeed =  args.meteorMaxSpeed;
@@ -89,22 +88,22 @@ var Celeste = function(){
         switch(this.density){
             case 'low':
             case 1: // with twinkle around 25% CPU
-                this.coverage = skypixels/10000;
+                this.coverage = skypixels/7000;
                 break;
             case 'medium':
             case 2: // with twinkle around 60% CPU
-                this.coverage = skypixels/5000;
+                this.coverage = skypixels/3000;
                 break;
             case 'high':
             case 3: // with twinkle close to 100% CPU
-                this.coverage = skypixels/2000;
+                this.coverage = skypixels/800;
                 break;
             case 'interstellar':
             case 4: // with twinkle use at your own risk ;)
                 this.coverage = skypixels/200;
                 break;
             default:
-                this.coverage = skypixels/5000;
+                this.coverage = skypixels/3000;
                 break;
         }
         this.coverage = Math.floor(this.coverage);
@@ -269,7 +268,6 @@ var Meteor = function(){
 
         this.angle = Math.random()*(this.maxAngle-this.minAngle)+this.minAngle;
         this.speed = Math.random()*(this.maxSpeed-this.minSpeed)+this.minSpeed;
-        console.log(this.speed);
         this.rotate(this.angle);
         that = this;
         var interval = Math.random()*this.frequency;
