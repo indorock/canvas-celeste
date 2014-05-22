@@ -1,0 +1,128 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../vendor/js/jquery-1.11.1.min.js"></script>
+    <script src="../vendor/js/jquery-ui-1.10.4.min.js"></script>
+    <script src="../vendor/js/kinetic.js"></script>
+    <script src="../celeste.js"></script>
+
+    <link href="../vendor/css/smoothness/jquery-ui-1.10.4.min.css" rel="stylesheet">
+
+    <style type="text/css">
+        body{
+            margin: 0;
+            padding: 0;
+            font-family: Tahoma, sans-serif;
+        }
+
+        #sky{
+            overflow: hidden;
+        }
+
+        .slider-container{
+            position: absolute;
+            top: 20px;
+            width: 200px;
+        }
+        .slider-container span{
+            color: white;
+            font-weight: bold;
+            display: block;
+            line-height: 25px;
+        }
+
+        #densityslider-container{
+            left: 20px;
+        }
+        #twinkleslider-container{
+            left: 240px;
+        }
+        #meteorfrequencyslider-container{
+            left: 460px;
+        }
+        #meteorspeedslider-container{
+            left: 680px;
+        }
+
+    </style>
+    <script>
+        $(function() {
+            $("#densityslider").slider({
+                min: 1,
+                max: 4,
+                value: 2,
+                change: function(event, ui){
+                    sky.reload({
+                        density: ui.value
+                    });
+                    ui.handle.blur();
+                }
+            }) ;
+
+            $("#twinkleslider").slider({
+                min: -100,
+                max: 0,
+                value: -50,
+                change: function(event, ui){
+                    sky.reload({
+                        twinkleInterval: ui.value*-1
+                    });
+                    ui.handle.blur();
+                }
+            }) ;
+
+            $("#meteorfrequencyslider").slider({
+                min: -16000,
+                max: -500,
+                value: -8000,
+                change: function(event, ui){
+                    sky.reload({
+                        meteorFrequency: ui.value*-1
+                    });
+                    ui.handle.blur();
+                }
+            }) ;
+
+            $("#meteorspeedslider").slider({
+                min: 40,
+                max: 200,
+                value: 120,
+                change: function(event, ui){
+                    sky.reload({
+                        meteorMinSpeed: ui.value*0.8,
+                        meteorMaxSpeed: ui.value*1.2
+                    });
+                    ui.handle.blur();
+                }
+            }) ;
+        });
+    </script>
+</head>
+
+<body>
+<div id="sky"></div>
+<div id="densityslider-container" class="slider-container">
+    <div id="densityslider" class="slider"></div>
+    <span>Star Density</span>
+</div>
+<div id="twinkleslider-container" class="slider-container">
+    <div id="twinkleslider" class="slider"></div>
+    <span>Star Twinkle</span>
+</div>
+<div id="meteorfrequencyslider-container" class="slider-container">
+    <div id="meteorfrequencyslider" class="slider"></div>
+    <span>Meteor Frequency</span>
+</div>
+<div id="meteorspeedslider-container" class="slider-container">
+    <div id="meteorspeedslider" class="slider"></div>
+    <span>Meteor Speed</span>
+</div>
+
+
+</body>
+
+<script>
+    var sky = new Celeste({density: 'medium'});
+</script>
+</html>
