@@ -14,6 +14,9 @@ var Celeste = function(){
     this.endOpacity = 0.3;
     this.twinkle = true;
     this.twinkleInterval = 50;
+    this.meteorMinSpeed = 100;
+    this.meteorMaxSpeed = 150;
+    this.meteorFrequency = 8000;
     this.container = 'sky';
     this.stars = [];
     this.meteor = null;
@@ -47,7 +50,7 @@ var Celeste = function(){
             this.shootMeteors();
             this.stage.add(this.layer);
         }
-        if(args.twinkleInterval){
+        if(typeof args.twinkleInterval !== 'undefined'){
             this.loadStarArgs(args);
         }
         if(args.meteorFrequency || args.meteorMinSpeed || args.meteorMaxSpeed){
@@ -67,19 +70,26 @@ var Celeste = function(){
         var that = this;
         this.stars.map(function(s){
             s.loadArgs(args)
-            if(args.twinkleInterval){
-                clearTimeout(s.tw);
+            console.log(args.twinkleInterval)
+            clearTimeout(s.tw);
+            if(args.twinkleInterval>0)
                 s.twinkle({twinkleInterval: args.twinkleInterval}, s, that);
-            }
         });
     };
 
     this.loadMeteorArgs = function(args){
         if(args.meteorFrequency){
+            this.meteorFrequency = args.meteorFrequency;
             this.meteor.frequency =  args.meteorFrequency;
         }
-        if(args.meteorMinSpeed) this.meteor.minSpeed =  args.meteorMinSpeed;
-        if(args.meteorMaxSpeed) this.meteor.maxSpeed =  args.meteorMaxSpeed;
+        if(args.meteorMinSpeed){
+            this.meteorMinSpeed = args.meteorMinSpeed;
+            this.meteor.minSpeed =  args.meteorMinSpeed;
+        }
+        if(args.meteorMaxSpeed){
+            this.meteorMaxSpeed = args.meteorMaxSpeed;
+            this.meteor.maxSpeed =  args.meteorMaxSpeed;
+        }
     };
 
     this.generateStars = function(){
@@ -129,7 +139,7 @@ var Celeste = function(){
         var style = "rgba("+red+","+green+","+blue+","+(alpha/255)+")";
         var star = this.baseStar.clone({x: posx, y: posy, radius: Math.floor(starsize/2), fill: style, opacity: this.beginOpacity});
         this.covered = this.covered + starsize;
-        if(this.twinkle && this.twinkleInterval){
+        if(this.twinkle && this.twinkleInterval>0){
             star.twinkle({beginOpacity: this.beginOpacity, endOpacity: this.endOpacity, twinkleInterval: this.twinkleInterval}, star, this);
         }
         return star;
@@ -138,11 +148,11 @@ var Celeste = function(){
     this.shootMeteors = function(){
         this.meteor = this.createMeteor();
         this.meteor.shoot(this.layer);
-        var that = this;
     };
 
     this.createMeteor = function(){
         var meteor = new Meteor();
+        meteor.loadArgs({frequency: this.meteorFrequency, minSpeed: this.meteorMinSpeed, maxSpeed: this.meteorMaxSpeed})
         this.layer.add(meteor);
         this.layer.draw();
         return meteor;
@@ -216,7 +226,7 @@ var Star = function(){
             that.opacity(that.beginOpacity);
             that.twinkleState = 1;
             sky.stage.batchDraw();
-            timeout = Math.floor((Math.random()*that.twinkleInterval/2)+(that.twinkleInterval/10));
+            timeout = Math.floor((Math.random()*that.twinkleInterval)+(that.twinkleInterval/10));
 
         }else{
             that.opacity(that.endOpacity);
@@ -260,6 +270,12 @@ var Meteor = function(){
     for(var a in arguments[0]) args[a] = arguments[0][a];
     Kinetic.Line.call(this, args);
 
+    this.loadArgs = function(args){
+        for(a in args){
+            this[a] = args[a];
+        }
+    };
+
     this.shoot = function(layer){
         this.posX = Math.random()*window.innerWidth;
         this.setY(-this.height);
@@ -278,7 +294,7 @@ var Meteor = function(){
         that.anim = new Kinetic.Animation(function(frame) {
             that.pos = that.getAbsolutePosition();
             that.setY(((frame.time/(50000/that.speed))*window.innerHeight)-that.height);
-            that.opacity(20000/that.speed/((frame.time*frame.time)/50));
+            that.opacity((800000/that.speed)/(frame.time*frame.time));
             var newpos = that.getAbsolutePosition()
             var yShift = that.pos.y - newpos.y;
             var xShift = Math.tan(that.angle*Math.PI/180) * yShift;

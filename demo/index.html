@@ -36,13 +36,13 @@
             left: 20px;
         }
         #twinkleslider-container{
-            left: 240px;
+            left: 260px;
         }
         #meteorfrequencyslider-container{
-            left: 460px;
+            left: 500px;
         }
         #meteorspeedslider-container{
-            left: 680px;
+            left: 740px;
         }
 
     </style>
@@ -61,12 +61,12 @@
             }) ;
 
             $("#twinkleslider").slider({
-                min: -100,
-                max: 0,
-                value: -50,
+                min: 0,
+                max: 99,
+                value: 50,
                 change: function(event, ui){
                     sky.reload({
-                        twinkleInterval: ui.value*-1
+                        twinkleInterval: (ui.value==0?ui.value:100-ui.value)
                     });
                     ui.handle.blur();
                 }
